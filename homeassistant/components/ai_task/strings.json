@@ -15,6 +15,10 @@
         "entity_id": {
           "name": "Entity ID",
           "description": "Entity ID to run the task on. If not provided, the preferred entity will be used."
+        },
+        "attachments": {
+          "name": "Attachments",
+          "description": "List of files to attach for multi-modal AI analysis."
         }
       }
     }

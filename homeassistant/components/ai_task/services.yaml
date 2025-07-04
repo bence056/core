@@ -17,3 +17,7 @@ generate_data:
           domain: ai_task
           supported_features:
             - ai_task.AITaskEntityFeature.GENERATE_DATA
+    attachments:
+      required: false
+      selector:
+        media:

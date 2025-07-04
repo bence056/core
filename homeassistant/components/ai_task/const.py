@@ -21,6 +21,7 @@ SERVICE_GENERATE_DATA = "generate_data"
 
 ATTR_INSTRUCTIONS: Final = "instructions"
 ATTR_TASK_NAME: Final = "task_name"
+ATTR_ATTACHMENTS: Final = "attachments"
 
 DEFAULT_SYSTEM_PROMPT = (
     "You are a Home Assistant expert and help users with their tasks."

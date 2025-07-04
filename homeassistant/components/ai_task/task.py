@@ -5,10 +5,23 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from homeassistant.components import media_source
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DATA_COMPONENT, DATA_PREFERENCES, AITaskEntityFeature
+
+
+@dataclass(slots=True)
+class PlayMediaWithId(media_source.PlayMedia):
+    """Play media with a media content ID."""
+
+    media_content_id: str
+    """Media source ID to play."""
+
+    def __str__(self) -> str:
+        """Return media source ID as a string."""
+        return f"<PlayMediaWithId {self.media_content_id}>"
 
 
 async def async_generate_data(
@@ -17,6 +30,7 @@ async def async_generate_data(
     task_name: str,
     entity_id: str | None = None,
     instructions: str,
+    attachments: list[dict] | None = None,
 ) -> GenDataTaskResult:
     """Run a task in the AI Task integration."""
     if entity_id is None:
@@ -34,10 +48,26 @@ async def async_generate_data(
             f"AI Task entity {entity_id} does not support generating data"
         )
 
+    # Resolve attachments
+    resolved_attachments: list[PlayMediaWithId] = []
+
+    for attachment in attachments or []:
+        media = await media_source.async_resolve_media(
+            hass, attachment["media_content_id"], None
+        )
+        resolved_attachments.append(
+            PlayMediaWithId(
+                url=media.url,
+                mime_type=media.mime_type,
+                media_content_id=attachment["media_content_id"],
+            )
+        )
+
     return await entity.internal_async_generate_data(
         GenDataTask(
             name=task_name,
             instructions=instructions,
+            attachments=resolved_attachments,
         )
     )
 
@@ -51,6 +81,9 @@ class GenDataTask:
 
     instructions: str
     """Instructions on what needs to be done."""
+
+    attachments: list[PlayMediaWithId] | None = None
+    """List of attachments to go along the instructions."""
 
     def __str__(self) -> str:
         """Return task as a string."""
