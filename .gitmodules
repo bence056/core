@@ -1,0 +1,3 @@
+[submodule "config/custom_components/sprinkle"]
+	path = config/custom_components/sprinkle
+	url = https://github.com/bence056/Sprinkle.git
